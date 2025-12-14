@@ -14,7 +14,7 @@ var _folder_dialog: EditorFileDialog
 
 var _configs: Array[RetrogradeImageConfig] = []
 var _selected_index: int = -1
-var _save_file: RetrogradeImageSaveFile = RetrogradeImageSaveFile.new()
+var _save: RetrogradeImageSave = RetrogradeImageSave.new()
 
 func _ready() -> void:
 	_file_dialog = EditorFileDialog.new()
@@ -46,12 +46,12 @@ func _ready() -> void:
 	%ButtonGenerate.icon = theme_.get_icon("Bake", "EditorIcons")
 	%ButtonSelectOutputPath.icon = theme_.get_icon("Folder", "EditorIcons")
 	
-	_save_file.load()
+	_save.load()
 	
-	for path_: String in _save_file.get_config_paths():
+	for path_: String in _save.get_config_paths():
 		_add_config(path_)
 	_update_configs_list()
-	_select_configuration(_get_config_index_from_path(_save_file.get_selected_config_path()))
+	_select_configuration(_get_config_index_from_path(_save.get_selected_config_path()))
 	
 func _on_file_selected(path_: String) -> void:
 	_add_config(path_)
@@ -148,7 +148,7 @@ func _select_configuration(index_: int) -> void:
 	
 	var config_: RetrogradeImageConfig = _configs[index_]
 
-	var save_data_: Dictionary = _save_file.get_config_data(config_.path)
+	var save_data_: Dictionary = _save.get_config_data(config_.path)
 
 	var inputs_: Array = config_.get_inputs()
 	
@@ -179,7 +179,7 @@ func _select_configuration(index_: int) -> void:
 		if save_data_.get("theme", "") == themes_[i]:
 			theme_index_ = i
 	
-	_save_file.set_selected_config_path(config_.path)
+	_save.set_selected_config_path(config_.path)
 
 	%OptionButtonTheme.selected = theme_index_
 	%LineEditOutputPath.text = save_data_.get("output_path", "res://assets")
@@ -191,7 +191,7 @@ func _remove_configuration(index_: int) -> void:
 	if _selected_index < 0:
 		return
 		
-	_save_file.erase_config_data(_configs[index_].path)
+	_save.erase_config_data(_configs[index_].path)
 	
 	_configs.remove_at(index_)
 	
@@ -202,7 +202,7 @@ func _remove_configuration(index_: int) -> void:
 	
 	_update_configs_list()
 	_select_configuration(index_)
-	_save_file.save()
+	_save.save()
 
 func _on_button_select_all_inputs_pressed() -> void:
 	var all_selected_: bool = true
@@ -283,8 +283,8 @@ func save_selected_config() -> void:
 		"output_path": %LineEditOutputPath.text
 	}
 
-	_save_file.set_config_data(path_, data_)
-	_save_file.save()
+	_save.set_config_data(path_, data_)
+	_save.save()
 
 func _on_line_edit_output_path_text_changed(_new_text: String) -> void:
 	save_selected_config()
