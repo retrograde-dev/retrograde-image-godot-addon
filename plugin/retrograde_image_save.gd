@@ -5,10 +5,17 @@ const FILE_PATH: String = "user://retrograde_image.json"
 var data: Dictionary = {}
 
 func load() -> void:
-	data = ProjectSettings.get_setting("addons/retrograde_image", {})
+	if ProjectSettings.has_setting("addons/retrograde_image"):
+		data = ProjectSettings.get_setting("addons/retrograde_image")
+		ProjectSettings.clear("addons/retrograde_image")
+		save()
+	else:
+		data.set("configs", ProjectSettings.get_setting("addons/retrograde_image/configs", {}))
+		data.set("selected_config_path", ProjectSettings.get_setting("addons/retrograde_image/selected_config_path", ""))
 
 func save() -> void:
-	ProjectSettings.set_setting("addons/retrograde_image", data)
+	ProjectSettings.set_setting("addons/retrograde_image/configs", data.get("configs", {}))
+	ProjectSettings.set_setting("addons/retrograde_image/selected_config_path", get_selected_config_path())
 	ProjectSettings.save()
 	
 func get_config_paths() -> Array:
