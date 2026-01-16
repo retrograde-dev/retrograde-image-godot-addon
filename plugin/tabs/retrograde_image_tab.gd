@@ -1,3 +1,4 @@
+@tool
 extends Control
 
 var _file_dialog: EditorFileDialog
@@ -15,6 +16,49 @@ var _configs: Array[RetrogradeImageConfig] = []
 var _selected_index: int = -1
 var _save: RetrogradeImageSave = RetrogradeImageSave.new()
 
+func _notification(what: int) -> void:
+	# Prevent theme from being saved to scene
+	match what:
+		NOTIFICATION_READY, NOTIFICATION_THEME_CHANGED:
+			_add_theme()
+		NOTIFICATION_EDITOR_PRE_SAVE:
+			_remove_theme()
+			_remove_configs()
+		NOTIFICATION_EDITOR_POST_SAVE:
+			_add_theme()
+			_add_configs()
+
+func _add_theme() -> void:
+	var theme_: Theme = EditorInterface.get_editor_theme()
+	
+	#for label_: Label in _subheader_labels:
+		#label_.add_theme_font_override("font", theme_.get_font("bold", "EditorFonts"))
+		
+	for label_: Label in _header_labels:
+		label_.add_theme_font_override("font", theme_.get_font("title", "EditorFonts"))
+		label_.add_theme_font_size_override("font_size", theme_.get_font_size("title_size", "EditorFonts"))
+		label_.add_theme_color_override("font_color", theme_.get_color("font_color", "Editor"))
+		
+	%ButtonAddConfig.icon = theme_.get_icon("Add", "EditorIcons")
+	%ButtonRemoveConfig.icon = theme_.get_icon("Remove", "EditorIcons")
+	%ButtonSelectAllInputs.icon = theme_.get_icon("ListSelect", "EditorIcons")
+	%ButtonSelectAllOutputs.icon = theme_.get_icon("ListSelect", "EditorIcons")
+	%ButtonGenerate.icon = theme_.get_icon("Bake", "EditorIcons")
+	%ButtonSelectOutputPath.icon = theme_.get_icon("Folder", "EditorIcons")
+
+func _remove_theme() -> void:
+	for label_: Label in _header_labels:
+		label_.remove_theme_font_override("font")
+		label_.remove_theme_font_size_override("font_size")
+		label_.remove_theme_color_override("font_color")
+		
+	%ButtonAddConfig.icon = null
+	%ButtonRemoveConfig.icon = null
+	%ButtonSelectAllInputs.icon = null
+	%ButtonSelectAllOutputs.icon = null
+	%ButtonGenerate.icon = null
+	%ButtonSelectOutputPath.icon = null
+	
 func _ready() -> void:
 	_file_dialog = EditorFileDialog.new()
 	_file_dialog.access = EditorFileDialog.ACCESS_RESOURCES
@@ -31,27 +75,22 @@ func _ready() -> void:
 	_folder_dialog.connect("dir_selected", _on_folder_selected)
 	add_child(_folder_dialog)
 	
-	var theme_: Theme = EditorInterface.get_editor_theme()
-	
-	for label_: Label in _header_labels:
-		label_.add_theme_font_override("font", theme_.get_font("title", "EditorFonts"))
-		label_.add_theme_font_size_override("font_size", theme_.get_font_size("title_size", "EditorFonts"))
-		label_.add_theme_color_override("font_color", theme_.get_color("font_color", "Editor"))
-
-	%ButtonAddConfig.icon = theme_.get_icon("Add", "EditorIcons")
-	%ButtonRemoveConfig.icon = theme_.get_icon("Remove", "EditorIcons")
-	%ButtonSelectAllInputs.icon = theme_.get_icon("ListSelect", "EditorIcons")
-	%ButtonSelectAllOutputs.icon = theme_.get_icon("ListSelect", "EditorIcons")
-	%ButtonGenerate.icon = theme_.get_icon("Bake", "EditorIcons")
-	%ButtonSelectOutputPath.icon = theme_.get_icon("Folder", "EditorIcons")
-	
 	_save.load()
 	
+	_add_configs()
+
+func _add_configs() -> void:
 	for path_: String in _save.get_config_paths():
 		_add_config(path_)
+		
 	_update_configs_list()
 	_select_configuration(_get_config_index_from_path(_save.get_selected_config_path()))
-	
+
+func _remove_configs() -> void:
+	_configs.clear()
+	_update_configs_list()
+	_select_configuration(-1)
+
 func _on_file_selected(path_: String) -> void:
 	_add_config(path_)
 	_update_configs_list()

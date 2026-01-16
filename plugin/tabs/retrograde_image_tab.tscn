@@ -52,6 +52,7 @@ text = "Add"
 [node name="ButtonRemoveConfig" type="Button" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/VBoxContainerConfigurations/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+disabled = true
 text = "Delete"
 
 [node name="ItemListConfigs" type="ItemList" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/VBoxContainerConfigurations"]
@@ -59,7 +60,6 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-item_count = 1
 
 [node name="HSplitContainer" type="HSplitContainer" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer"]
 layout_mode = 2
@@ -82,6 +82,7 @@ layout_mode = 2
 [node name="ButtonSelectAllInputs" type="Button" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/HSplitContainer/VBoxContainerInputs/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+disabled = true
 text = "Select All"
 
 [node name="Panel" type="Panel" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/HSplitContainer/VBoxContainerInputs"]
@@ -117,6 +118,7 @@ layout_mode = 2
 [node name="ButtonSelectAllOutputs" type="Button" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/HSplitContainer/VBoxContainerOutputs/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+disabled = true
 text = "Select All"
 
 [node name="Panel" type="Panel" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/HSplitContainer/VBoxContainerOutputs"]
@@ -149,11 +151,13 @@ text = "Path:"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "res://assets/inputs/[[input]]/[[variant]]"
+text = "res://assets"
+editable = false
 
 [node name="ButtonSelectOutputPath" type="Button" parent="ScrollContainer/HSplitContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+disabled = true
 
 [node name="VBoxContainerGenerate" type="VBoxContainer" parent="ScrollContainer/HSplitContainer"]
 custom_minimum_size = Vector2(280, 0)
@@ -176,14 +180,7 @@ text = "Theme"
 [node name="OptionButtonTheme" type="OptionButton" parent="ScrollContainer/HSplitContainer/VBoxContainerGenerate/GridContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-selected = 0
-item_count = 3
-popup/item_0/text = "Default"
-popup/item_0/id = 0
-popup/item_1/text = "Dark"
-popup/item_1/id = 1
-popup/item_2/text = "Light"
-popup/item_2/id = 2
+disabled = true
 
 [node name="Label3" type="Label" parent="ScrollContainer/HSplitContainer/VBoxContainerGenerate/GridContainer"]
 layout_mode = 2
@@ -197,23 +194,25 @@ min_value = -1.0
 max_value = 128.0
 value = -1.0
 rounded = true
+editable = false
 suffix = "(Use Default)"
 
 [node name="CheckBoxIgnoreOutputPath" type="CheckBox" parent="ScrollContainer/HSplitContainer/VBoxContainerGenerate"]
 unique_name_in_owner = true
 layout_mode = 2
-button_pressed = true
+disabled = true
 text = "Ignore Output Path"
 
 [node name="CheckBoxIgnoreOutputConfigPath" type="CheckBox" parent="ScrollContainer/HSplitContainer/VBoxContainerGenerate"]
 unique_name_in_owner = true
 layout_mode = 2
-button_pressed = true
+disabled = true
 text = "Ignore Output Config Path"
 
 [node name="ButtonGenerate" type="Button" parent="ScrollContainer/HSplitContainer/VBoxContainerGenerate"]
 unique_name_in_owner = true
 layout_mode = 2
+disabled = true
 text = "Generate Images"
 
 [connection signal="pressed" from="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/VBoxContainerConfigurations/HBoxContainer/ButtonAddConfig" to="." method="_on_button_add_config_pressed"]
