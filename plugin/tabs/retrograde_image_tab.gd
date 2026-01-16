@@ -1,4 +1,3 @@
-@tool
 extends Control
 
 var _file_dialog: EditorFileDialog
