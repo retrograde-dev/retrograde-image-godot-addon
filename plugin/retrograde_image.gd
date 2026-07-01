@@ -83,7 +83,9 @@ func run(config_path_: String, options_: Dictionary = {}) -> void:
 					continue
 
 				var input_data_: Dictionary = data_["inputs"][input_name_]
-				if not input_data_.has("paths"):
+				if (not input_data_.has("paths") or 
+					input_data_.get("paths").size() == 0
+				):
 					continue
 
 				_input_name = input_name_
@@ -213,12 +215,13 @@ func _output_images() -> void:
 
 			if _input_data.get("skip", []).has(variant_name_):
 				continue
-			if not _layer_map.has(variant_name_):
-				continue
-
+				
 			_variant_name = variant_name_
 			
-			_image_name = _layer_map[variant_name_].get_file().get_basename()
+			if _layer_map.has(variant_name_):
+				_image_name = _layer_map[variant_name_].get_file().get_basename()
+			else:
+				_image_name = _input_data.get("paths")[0].get_file().get_basename()
 
 			_frame_index = _config_data.get("start_index", 0)
 
@@ -256,12 +259,12 @@ func _output_frames() -> void:
 			if _input_data.get("skip", []).has(variant_name_):
 				continue
 				
-			if not _layer_map.has(variant_name_):
-				continue
-
 			_variant_name = variant_name_
-			
-			_image_name = _layer_map[variant_name_].get_file().get_basename()
+
+			if _layer_map.has(variant_name_):
+				_image_name = _layer_map[variant_name_].get_file().get_basename()
+			else:
+				_image_name = _input_data.get("paths")[0].get_file().get_basename()
 
 			_frame_index = _config_data.get("start_index", 0)
 			
@@ -297,10 +300,10 @@ func _output_frames() -> void:
 func _output_sheet() -> void:
 	var output_path_: String = _get_output_path()
 	
-	var width: int = _config_data.get("width", 0)
-	var height: int = _config_data.get("height", 0)
-	var cols: int = _config_data.get("cols", 0)
-	var rows: int = _config_data.get("rows", 0)
+	var width: int = _config_data.get("sheet_width", 0)
+	var height: int = _config_data.get("sheet_height", 0)
+	var cols: int = _config_data.get("sheet_cols", 0)
+	var rows: int = _config_data.get("sheet_rows", 0)
 
 	if width <= 0 and height <= 0 and rows <= 0 and cols <= 0:
 		if "[[group]]" in output_path_:
@@ -317,10 +320,10 @@ func _output_sheet_frames() -> void:
 	var output_path_: String = _get_output_path()
 	var template_: Dictionary = _input_data["templates"][_config_data["template"]]
 
-	var width_: int = _config_data.get("width", 0)
-	var height_: int = _config_data.get("height", 0)
-	var cols_: int = _config_data.get("cols", 0)
-	var rows_: int = _config_data.get("rows", 0)
+	var width_: int = _config_data.get("sheet_width", 0)
+	var height_: int = _config_data.get("sheet_height", 0)
+	var cols_: int = _config_data.get("sheet_cols", 0)
+	var rows_: int = _config_data.get("sheet_rows", 0)
 
 	_frame_index = _config_data.get("start_index", 0)
 	var real_frame_index_: int = 0
@@ -341,7 +344,7 @@ func _output_sheet_frames() -> void:
 		real_frame_index_ += 1
 
 func _output_sheet_split_directional(output_path_: String, frame_index_: int = -1) -> void:
-	var direction_: String = _config_data.get("direction", "horizontal")
+	var sheet_direction_: String = _config_data.get("sheet_direction", "horizontal")
 	
 	_variant_name = _input_name
 
@@ -359,9 +362,6 @@ func _output_sheet_split_directional(output_path_: String, frame_index_: int = -
 			
 			if _input_data.get("skip", []).has(variant_name_):
 				continue
-			
-			if not _layer_map.has(variant_name_):
-				continue
 
 			var variant_img_: Image = _get_image_from_variant(
 				group_name_, 
@@ -373,7 +373,10 @@ func _output_sheet_split_directional(output_path_: String, frame_index_: int = -
 				continue
 
 			if img_ == null:
-				_image_name = _layer_map[variant_name_].get_file().get_basename()
+				if _layer_map.has(variant_name_):
+					_image_name = _layer_map[variant_name_].get_file().get_basename()
+				else:
+					_image_name = _input_data.get("paths")[0].get_file().get_basename()
 				
 				var size_with_padding_: Vector2i = _get_size_with_padding(
 					_get_size_from_variant(variant_name_), 
@@ -388,18 +391,18 @@ func _output_sheet_split_directional(output_path_: String, frame_index_: int = -
 			var new_size_: Vector2i
 			var new_position_: Vector2i
 			
-			if direction_ == "horizontal":
-				new_size_ = Vector2i(
-					max(img_.get_width(), variant_img_.get_width()),
-					img_.get_height() + variant_img_.get_height()
-				)
-				new_position_ = Vector2i(0, img_.get_height())
-			else:
+			if sheet_direction_ == "horizontal":
 				new_size_ = Vector2i(
 					img_.get_width() + variant_img_.get_width(),
 					max(img_.get_height(), variant_img_.get_height())
 				)
 				new_position_ = Vector2i(img_.get_width(), 0)
+			else:
+				new_size_ = Vector2i(
+					max(img_.get_width(), variant_img_.get_width()),
+					img_.get_height() + variant_img_.get_height()
+				)
+				new_position_ = Vector2i(0, img_.get_height())
 
 			var new_img_: Image = Image.create_empty(
 				new_size_.x, 
@@ -433,7 +436,7 @@ func _output_sheet_split_directional(output_path_: String, frame_index_: int = -
 		img_.save_png(file_)
 
 func _output_sheet_grouped_directional(output_path_: String, frame_index_: int = -1) -> void:
-	var direction_: String = _config_data.get("direction", "horizontal")
+	var sheet_direction_: String = _config_data.get("sheet_direction", "horizontal")
 	var group_padding_: bool = _config_data.get("group_padding", false)
 
 	var img_: Image = null
@@ -456,9 +459,6 @@ func _output_sheet_grouped_directional(output_path_: String, frame_index_: int =
 			
 			if _input_data.get("skip", []).has(variant_name_):
 				continue
-				
-			if not _layer_map.has(variant_name_):
-				continue
 
 			var variant_img_: Image = _get_image_from_variant(
 				group_name_, 
@@ -470,7 +470,10 @@ func _output_sheet_grouped_directional(output_path_: String, frame_index_: int =
 				continue
 
 			if img_ == null:
-				_image_name = _layer_map[variant_name_].get_file().get_basename()
+				if _layer_map.has(variant_name_):
+					_image_name = _layer_map[variant_name_].get_file().get_basename()
+				else:
+					_image_name = _input_data.get("paths")[0].get_file().get_basename()
 				
 				var size_with_padding_: Vector2i = _get_size_with_padding(
 					_get_size_from_variant(variant_name_), 
@@ -516,18 +519,18 @@ func _output_sheet_grouped_directional(output_path_: String, frame_index_: int =
 			var new_size_: Vector2i
 			var new_position_: Vector2i
 			
-			if direction_ == "horizontal":
-				new_size_ = Vector2i(
-					max(img_.get_width(), variant_img_.get_width()),
-					img_.get_height() + variant_img_.get_height()
-				)
-				new_position_ = Vector2i(0, img_.get_height())
-			else:
+			if sheet_direction_ == "horizontal":
 				new_size_ = Vector2i(
 					img_.get_width() + variant_img_.get_width(),
 					max(img_.get_height(), variant_img_.get_height())
 				)
 				new_position_ = Vector2i(img_.get_width(), 0)
+			else:
+				new_size_ = Vector2i(
+					max(img_.get_width(), variant_img_.get_width()),
+					img_.get_height() + variant_img_.get_height()
+				)
+				new_position_ = Vector2i(0, img_.get_height())
 
 			var new_img_: Image = Image.create_empty(
 				new_size_.x, 
@@ -567,6 +570,13 @@ func _output_sheet_grouped_directional(output_path_: String, frame_index_: int =
 func _output_sheet_split_tiled(output_path_: String, frame_index_: int = -1) -> void:
 	_variant_name = _input_name
 
+	var sheet_direction_: String = _config_data.get("sheet_direction", "horizontal")
+
+	var frame_len_: int = 1
+	if frame_index_ == -1:
+		var template_: Dictionary = _input_data["templates"][_config_data["template"]]
+		frame_len_ = template_["frames"].size()
+
 	for group_name_: String in _input_data.get("groups", {}).keys():
 		var group_data_: Dictionary = _input_data["groups"][group_name_]
 		
@@ -574,7 +584,7 @@ func _output_sheet_split_tiled(output_path_: String, frame_index_: int = -1) -> 
 		
 		_references = group_data_.get("references", {})
 
-		var tiling_size_: Vector2i = _get_tiling_size(group_name_)
+		var tiling_size_: Vector2i = _get_tiling_size(group_name_, frame_len_)
 		
 		if tiling_size_ == Vector2i.ZERO:
 			continue
@@ -583,23 +593,13 @@ func _output_sheet_split_tiled(output_path_: String, frame_index_: int = -1) -> 
 		var offset_x_: int = 0
 		var offset_y_: int = 0
 
-		var horizontal_: bool = true
-		if tiling_size_.x > 0:
-			if tiling_size_.y > 0 and _config_data.get("direction", "horizontal") == "horizontal":
-				horizontal_ = false
-		else:
-			horizontal_ = false
-
-		var cols_: int = _config_data.get("cols", 0)
-		var rows_: int = _config_data.get("rows", 0)
+		var cols_: int = _config_data.get("sheet_cols", 0)
+		var rows_: int = _config_data.get("sheet_rows", 0)
 
 		for variant_name_: String in group_data_.get("variants", []):
 			variant_name_ = _get_reference("*", variant_name_)
 			
 			if _input_data.get("skip", []).has(variant_name_):
-				continue
-				
-			if not _layer_map.has(variant_name_):
 				continue
 
 			var variant_img_: Image = _get_image_from_variant(
@@ -612,7 +612,10 @@ func _output_sheet_split_tiled(output_path_: String, frame_index_: int = -1) -> 
 				continue
 
 			if img_ == null:
-				_image_name = _layer_map[variant_name_].get_file().get_basename()
+				if _layer_map.has(variant_name_):
+					_image_name = _layer_map[variant_name_].get_file().get_basename()
+				else:
+					_image_name = _input_data.get("paths")[0].get_file().get_basename()
 				
 				var size_with_padding_: Vector2i = _get_size_with_padding(
 					_get_size_from_variant(variant_name_), 
@@ -656,7 +659,7 @@ func _output_sheet_split_tiled(output_path_: String, frame_index_: int = -1) -> 
 					Vector2i.ZERO
 				)
 
-				if horizontal_:
+				if sheet_direction_ == "horizontal":
 					offset_x_ += variant_img_.get_width()
 				else:
 					offset_y_ += variant_img_.get_height()
@@ -668,7 +671,7 @@ func _output_sheet_split_tiled(output_path_: String, frame_index_: int = -1) -> 
 			var new_size_: Vector2i = Vector2i.ZERO
 			var new_position_: Vector2i = Vector2i.ZERO
 
-			if horizontal_:
+			if sheet_direction_ == "horizontal":
 				if offset_x_ + variant_img_.get_width() > tiling_size_.x:
 					offset_x_ = 0
 					offset_y_ += variant_img_.get_height()
@@ -738,11 +741,16 @@ func _output_sheet_split_tiled(output_path_: String, frame_index_: int = -1) -> 
 		img_.save_png(file_)
 
 func _output_sheet_grouped_tiled(output_path_: String, frame_index_: int = -1) -> void:
-	var direction_: String = _config_data.get("direction", "horizontal")
+	var sheet_direction_: String = _config_data.get("sheet_direction", "horizontal")
 	var group_padding_: bool = _config_data.get("group_padding", false)
 	var continuous_: Variant = _config_data.get("continuous", false)
 
-	var tiling_size_: Vector2i = _get_tiling_size()
+	var frame_len_: int = 1
+	if frame_index_ == -1:
+		var template_: Dictionary = _input_data["templates"][_config_data["template"]]
+		frame_len_ = template_["frames"].size()
+		
+	var tiling_size_: Vector2i = _get_tiling_size("", frame_len_)
 	if tiling_size_ == Vector2i.ZERO:
 		return
 
@@ -751,15 +759,8 @@ func _output_sheet_grouped_tiled(output_path_: String, frame_index_: int = -1) -
 	var offset_x_: int = 0
 	var offset_y_: int = 0
 
-	var horizontal_: bool = true
-	if tiling_size_.x > 0:
-		if tiling_size_.y > 0 and direction_ == "horizontal":
-			horizontal_ = false
-	else:
-		horizontal_ = false
-
-	var cols_: int = _config_data.get("cols", 0)
-	var rows_: int = _config_data.get("rows", 0)
+	var cols_: int = _config_data.get("sheet_cols", 0)
+	var rows_: int = _config_data.get("sheet_rows", 0)
 
 	_variant_name = _input_name
 	
@@ -778,9 +779,6 @@ func _output_sheet_grouped_tiled(output_path_: String, frame_index_: int = -1) -
 			
 			if _input_data.get("skip", []).has(variant_name_):
 				continue
-				
-			if not _layer_map.has(variant_name_):
-				continue
 
 			var variant_img_: Image = _get_image_from_variant(
 				group_name_, 
@@ -792,7 +790,10 @@ func _output_sheet_grouped_tiled(output_path_: String, frame_index_: int = -1) -
 				continue
 
 			if img_ == null:
-				_image_name = _layer_map[variant_name_].get_file().get_basename()
+				if _layer_map.has(variant_name_):
+					_image_name = _layer_map[variant_name_].get_file().get_basename()
+				else:
+					_image_name = _input_data.get("paths")[0].get_file().get_basename()
 				
 				var size_with_padding_: Vector2i = _get_size_with_padding(
 					_get_size_from_variant(variant_name_), 
@@ -836,7 +837,7 @@ func _output_sheet_grouped_tiled(output_path_: String, frame_index_: int = -1) -
 					Vector2i.ZERO
 				)
 
-				if horizontal_:
+				if sheet_direction_ == "horizontal":
 					offset_x_ += variant_img_.get_width()
 				else:
 					offset_y_ += variant_img_.get_height()
@@ -853,7 +854,7 @@ func _output_sheet_grouped_tiled(output_path_: String, frame_index_: int = -1) -
 				group_continuous_ = true
 
 			if group_continuous_ and not group_data_.get("break", false) and first_variant_:
-				if horizontal_:
+				if sheet_direction_ == "horizontal":
 					if variant_img_.get_height() != last_img_.get_height():
 						offset_x_ = 0
 						offset_y_ += last_img_.get_height()
@@ -878,7 +879,7 @@ func _output_sheet_grouped_tiled(output_path_: String, frame_index_: int = -1) -
 						if offset_y_ % frame_size_.y != 0:
 							offset_y_ = int(ceil(offset_y_ / float(frame_size_.y))) * frame_size_.y
 			elif first_variant_:
-				if horizontal_:
+				if sheet_direction_ == "horizontal":
 					offset_x_ = 0
 					offset_y_ += last_img_.get_height()
 				else:
@@ -892,7 +893,7 @@ func _output_sheet_grouped_tiled(output_path_: String, frame_index_: int = -1) -
 			var new_size_: Vector2i = Vector2i.ZERO
 			var new_position_: Vector2i = Vector2i.ZERO
 
-			if horizontal_:
+			if sheet_direction_ == "horizontal":
 				if offset_x_ + variant_img_.get_width() > tiling_size_.x:
 					offset_x_ = 0
 					offset_y_ += variant_img_.get_height()
@@ -972,7 +973,7 @@ func _get_image_from_variant(group_name_: String, variant_name_: String, frame_i
 		frames_ = template_["frames"] 
 	else:
 		frames_ = [template_["frames"][frame_index_]]
-		
+	
 	frames_ = _get_frames(group_name_, variant_name_, frames_)
 
 	var variant_size_: Vector2i = _get_size_from_variant(variant_name_)
@@ -980,7 +981,7 @@ func _get_image_from_variant(group_name_: String, variant_name_: String, frame_i
 	if variant_size_ == Vector2i.ZERO:
 		return null
 
-	var direction_: String = _config_data.get("direction", "horizontal")
+	var frame_direction_: String = _config_data.get("frame_direction", "horizontal")
 	var padding_: PackedInt32Array = _get_padding()
 
 	var img_size_: Vector2i = _get_size_from_config(
@@ -1002,7 +1003,7 @@ func _get_image_from_variant(group_name_: String, variant_name_: String, frame_i
 	var padding_x_: int = 0
 	var padding_y_: int = 0
 
-	if direction_ == "horizontal":
+	if frame_direction_ == "horizontal":
 		padding_y_ = padding_[0]
 	else:
 		padding_x_ = padding_[3]
@@ -1010,7 +1011,7 @@ func _get_image_from_variant(group_name_: String, variant_name_: String, frame_i
 	for frame_: Array in frames_:
 		var variant_img_: Image = null
 
-		if direction_ == "horizontal":
+		if frame_direction_ == "horizontal":
 			padding_x_ += padding_[3]
 		else:
 			padding_y_ += padding_[0]
@@ -1028,7 +1029,8 @@ func _get_image_from_variant(group_name_: String, variant_name_: String, frame_i
 
 			variant_img_ = _process_image(
 				variant_img_, 
-				frame_layer_.get("alpha", 1.0)
+				frame_layer_.get("alpha", 1.0),
+				frame_layer_.get("transforms", [])
 			)
 
 			var offset_: Vector2i = Vector2i(
@@ -1043,7 +1045,7 @@ func _get_image_from_variant(group_name_: String, variant_name_: String, frame_i
 			
 			img_ = _paste_image(img_, variant_img_, position_)
 
-		if direction_ == "horizontal":
+		if frame_direction_ == "horizontal":
 			padding_x_ += padding_[1]
 			
 			col_ += 1
@@ -1060,25 +1062,45 @@ func _get_image_from_variant(group_name_: String, variant_name_: String, frame_i
 
 	return img_
 
-func _process_image(img_: Image, alpha_: float = 1.0) -> Image:
+func _process_image(img_: Image, alpha_: float = 1.0, transforms_: Array = []) -> Image:
 	var color_map_: Array[Dictionary] = _get_color_map()
 	
-	return _replace_colors(img_, color_map_, alpha_)
+	img_ = _replace_colors(img_, color_map_, alpha_)
+	
+	for transform_: String in transforms_:
+		if transform_ == "trim":
+			var trim_rect_: Rect2i = img_.get_used_rect()
+			img_ = img_.get_region(trim_rect_)
+		elif transform_ == "flip_h":
+			img_.flip_x()
+		elif transform_ == "flip_v":
+			img_.flip_y()
+		elif transform_ == "rotate_right":
+			img_.rotate_90(ClockDirection.CLOCKWISE)
+		elif transform_ == "rotate_left":
+			img_.rotate_90(ClockDirection.COUNTERCLOCKWISE)
+
+	return img_
 
 func _get_color_map() -> Array[Dictionary]:
-	if _theme_data.is_empty():
-		return []
-
-	var input_colors_: Dictionary = _input_data.get("colors", {})
 	var map_: Array[Dictionary] = []
+	
+	var input_colors_: Dictionary = _input_data.get("colors", {})
 
-	for color_name_: String in _theme_data.keys():
+	if input_colors_.is_empty():
+		return map_
+		
+	var group_colors_: Dictionary = _input_data.get("groups", {}).get(_group_name, {}).get("colors", {})
+		
+	for color_name_: String in input_colors_.keys():
 		var input_color_: String = input_colors_.get(color_name_, "")
 		
-		if input_color_.is_empty():
-			continue
-			
-		var output_color_: String = _theme_data[color_name_]
+		var output_color_: String = input_colors_.get(color_name_)
+		
+		if group_colors_.has(color_name_):
+			output_color_ = _theme_data.get(group_colors_.get(color_name_), output_color_)
+		else:
+			output_color_ = _theme_data.get(color_name_, output_color_)
 		
 		map_.append({
 			"from": Color(input_color_),
@@ -1229,15 +1251,15 @@ func _get_layers_from_ora(path_: String) -> Array:
 	return layers_
 
 func _get_size_from_variant(variant_name_: String) -> Vector2i:
-	if not _layer_map.has(variant_name_):
-		_errors.append("Variant not found. (%s)" % variant_name_)
-		return Vector2i.ZERO
-
 	for group_name_: String in _input_data.get("groups", {}).keys():
 		var group_data_: Dictionary = _input_data["groups"][group_name_]
 		
 		if group_data_.get("variants", []).has(variant_name_) and group_data_.has("size"):
 			return Vector2i(group_data_["size"][0], group_data_["size"][1])
+
+	if not _layer_map.has(variant_name_):
+		_errors.append("Variant not found. (%s)" % variant_name_)
+		return Vector2i.ZERO
 
 	return _get_size_from_ora(_layer_map[variant_name_])
 
@@ -1283,7 +1305,7 @@ func _get_size_from_ora(path_: String) -> Vector2i:
 func _get_size_from_config(
 	ora_size_: Vector2i, 
 	padding_: PackedInt32Array, 
-	frames_len_: int
+	frame_len_: int
 ) -> Vector2i:
 	var mode_: String = _config_data.get("mode", "images")
 	
@@ -1292,24 +1314,18 @@ func _get_size_from_config(
 	if mode_ == "frames":
 		return real_size_
 
-	var direction_: String = _config_data.get("direction", "horizontal")
-	
-	if mode_ == "sheet" or mode_ == "sheet_frames":
-		if direction_ == "horizontal":
-			return Vector2i(real_size_.x * frames_len_, real_size_.y)
-		else:
-			return Vector2i(real_size_.x, real_size_.y * frames_len_)
+	var frame_direction_: String = _config_data.get("frame_direction", "horizontal")
 
-	var width_: int = _config_data.get("width", 0)
-	var height_: int = _config_data.get("height", 0)
-	var cols_: int = _config_data.get("cols", 0)
-	var rows_: int = _config_data.get("rows", 0)
+	var width_: int = _config_data.get("frame_width", 0)
+	var height_: int = _config_data.get("frame_height", 0)
+	var cols_: int = _config_data.get("frame_cols", 0)
+	var rows_: int = _config_data.get("frame_rows", 0)
 
 	if width_ <= 0 and height_ <= 0 and rows_ <= 0 and cols_ <= 0:
-		if direction_ == "horizontal":
-			return Vector2i(real_size_.x * frames_len_, real_size_.y)
+		if frame_direction_ == "horizontal":
+			return Vector2i(real_size_.x * frame_len_, real_size_.y)
 		else:
-			return Vector2i(real_size_.x, real_size_.y * frames_len_)
+			return Vector2i(real_size_.x, real_size_.y * frame_len_)
 
 	var frame_cols_: int = 0
 	var frame_rows_: int = 0
@@ -1317,34 +1333,34 @@ func _get_size_from_config(
 	if width_ <= 0 and height_ <= 0:
 		if rows_ > 0:
 			if cols_ > 0:
-				if direction_ == "horizontal":
-					frame_cols_ = min(cols_, frames_len_)
-					frame_rows_ = int(ceil(frames_len_ / float(cols_)))
+				if frame_direction_ == "horizontal":
+					frame_cols_ = min(cols_, frame_len_)
+					frame_rows_ = int(ceil(frame_len_ / float(cols_)))
 				else:
-					frame_cols_ = int(ceil(frames_len_ / float(rows_)))
-					frame_rows_ = min(cols_, frames_len_)
+					frame_cols_ = int(ceil(frame_len_ / float(rows_)))
+					frame_rows_ = min(cols_, frame_len_)
 			else:
-				frame_cols_ = int(ceil(frames_len_ / float(rows_)))
-				frame_rows_ = min(cols_, frames_len_)
+				frame_cols_ = int(ceil(frame_len_ / float(rows_)))
+				frame_rows_ = min(cols_, frame_len_)
 		else:
-			frame_cols_ = min(cols_, frames_len_)
-			frame_rows_ = int(ceil(frames_len_ / float(cols_)))
+			frame_cols_ = min(cols_, frame_len_)
+			frame_rows_ = int(ceil(frame_len_ / float(cols_)))
 			
 		return Vector2i(real_size_.x * frame_cols_, real_size_.y * frame_rows_)
 	
 	if width_ > 0 and height_ > 0:
-		if direction_ == "horizontal":
+		if frame_direction_ == "horizontal":
 			frame_cols_ = int(floor(width_ / float(real_size_.x)))
-			frame_rows_ = int(ceil(frames_len_ / float(frame_cols_)))
+			frame_rows_ = int(ceil(frame_len_ / float(frame_cols_)))
 		else:
 			frame_cols_ = int(floor(height_ / float(real_size_.y)))
-			frame_rows_ = int(ceil(frames_len_ / float(frame_cols_)))
+			frame_rows_ = int(ceil(frame_len_ / float(frame_cols_)))
 	elif width_ > 0:
 		frame_cols_ = int(floor(width_ / float(real_size_.x)))
-		frame_rows_ = int(ceil(frames_len_ / float(frame_cols_)))
+		frame_rows_ = int(ceil(frame_len_ / float(frame_cols_)))
 	else:
 		frame_rows_ = int(floor(height_ / float(real_size_.y)))
-		frame_cols_ = int(ceil(frames_len_ / float(frame_rows_)))
+		frame_cols_ = int(ceil(frame_len_ / float(frame_rows_)))
 
 	return Vector2i(real_size_.x * frame_cols_, real_size_.y * frame_rows_)
 
@@ -1379,9 +1395,9 @@ func _get_size_with_padding(
 	)
 
 	if frames_ > 1:
-		var direction_: String = _config_data.get("direction", "horizontal")
+		var frame_direction_: String = _config_data.get("frame_direction", "horizontal")
 		
-		if direction_ == "horizontal":
+		if frame_direction_ == "horizontal":
 			new_size_ = Vector2i(
 				new_size_.x * frames_, 
 				new_size_.y
@@ -1394,16 +1410,16 @@ func _get_size_with_padding(
 
 	return new_size_
 
-func _get_tiling_size(group_name_: String = "") -> Vector2i:
-	var width_: int = _config_data.get("width", 0)
-	var height_: int = _config_data.get("height", 0)
-	var cols_: int = _config_data.get("cols", 0)
-	var rows_: int = _config_data.get("rows", 0)
+func _get_tiling_size(group_name_: String = "", frame_len_: int = 1) -> Vector2i:
+	var width_: int = _config_data.get("sheet_width", 0)
+	var height_: int = _config_data.get("sheet_height", 0)
+	var cols_: int = _config_data.get("sheet_cols", 0)
+	var rows_: int = _config_data.get("sheet_rows", 0)
 
 	if width_ <= 0 and height_ <= 0 and rows_ <= 0 and cols_ <= 0:
 		return Vector2i.ZERO
 
-	var min_size_: Vector2i = _get_min_group_size(group_name_)
+	var min_size_: Vector2i = _get_min_group_size(group_name_, frame_len_, false)
 
 	if width_ > 0:
 		if height_ > 0:
@@ -1413,7 +1429,7 @@ func _get_tiling_size(group_name_: String = "") -> Vector2i:
 	elif height_ > 0:
 		return Vector2i(0, max(height_, min_size_.y))
 
-	var first_min_size_: Vector2i = _get_min_group_size(group_name_, true)
+	var first_min_size_: Vector2i = _get_min_group_size(group_name_, frame_len_, true)
 
 	if cols_ > 0:
 		if rows_ > 0:
@@ -1426,12 +1442,13 @@ func _get_tiling_size(group_name_: String = "") -> Vector2i:
 	else:
 		return Vector2i(0, max(rows_ * first_min_size_.y, min_size_.y))
 
-func _get_min_group_size(group_name_: String = "", first_: bool = false) -> Vector2i:
+func _get_min_group_size(
+	group_name_: String = "", 
+	frame_len_: int = 1, 
+	first_: bool = false
+) -> Vector2i:
 	var width_:  int = 0
 	var height_: int = 0
-
-	var template_: Dictionary = _input_data["templates"][_config_data["template"]]
-	var frames_: Array = template_["frames"]
 
 	for current_group_name_: String in _input_data.get("groups", {}).keys():
 		if group_name_ != "" and group_name_ != current_group_name_:
@@ -1446,18 +1463,16 @@ func _get_min_group_size(group_name_: String = "", first_: bool = false) -> Vect
 
 			if _input_data.get("skip", []).has(variant_name_):
 				continue
-				
-			if not _layer_map.has(variant_name_):
-				continue
 
 			var variant_size_: Vector2i = _get_size_from_variant(variant_name_)
+			
 			if variant_size_ == Vector2i.ZERO:
 				continue
 
 			variant_size_ = _get_size_with_padding(
 				variant_size_,
 				_get_padding(),
-				frames_.size()
+				frame_len_
 			)
 
 			if variant_size_.x > width_:
@@ -1477,7 +1492,37 @@ func _get_reference(layer_name_: String, variant_name_: String) -> String:
 	var ref_: Variant = _references.get(layer_name_, layer_name_)
 	
 	if ref_ is Dictionary:
-		ref_ = ref_.get(variant_name_, layer_name_)
+		if ref_.has(variant_name_):
+			ref_ = ref_.get(variant_name_)
+		else:
+			var result_: String = layer_name_
+
+			for s: String in ref_:
+				if not s.begins_with("/") or not s.ends_with("/"):
+					continue
+
+				var pattern_: String = s.substr(1, s.length() - 2)
+
+				var regex_: RegEx = RegEx.new()
+				
+				if regex_.compile(pattern_) != OK:
+					continue
+
+				var match_: RegExMatch = regex_.search(variant_name_)
+				if match_ == null:
+					continue
+
+				result_ = ref_.get(s, layer_name_)
+
+				for i: int in range(1, match_.get_group_count() + 1):
+					result_ = result_.replace(
+						"$" + str(i), 
+						match_.get_string(i)
+					)
+
+				break
+			
+			ref_ = result_
 	
 	if ref_ == "*":
 		return variant_name_
@@ -1497,43 +1542,76 @@ func _get_frames(group_name_: String, variant_name_: String, frames_: Array) -> 
 				if not frame_references_.has(frame_layer_):
 					new_frame_layers_.append({"layer": frame_layer_})
 					continue
-					
+				
 				for frame_reference_: Dictionary in frame_references_[frame_layer_]:
-					if (frame_reference_.get("groups") != null and 
-						not frame_reference_["groups"].has(group_name_)
+					if (frame_reference_.get("groups", null) != null and
+						not _matches_values(
+							group_name_,
+							frame_reference_.get("groups", [])
+						)
 					):
 						continue
-						
-					if (frame_reference_.get("variants") != null and 
-						not frame_reference_["variants"].has(variant_name_)
+					
+					if (frame_reference_.get("variants", null) != null and
+						not _matches_values(
+							variant_name_,
+							frame_reference_.get("variants", [])
+						)
 					):
 						continue
 						
 					new_frame_layers_.append({
 						"layer": frame_reference_.get("layer", "*"),
 						"offset": frame_reference_.get("offset", [0, 0]),
-						"alpha": frame_reference_.get("alpha", 1.0)
+						"alpha": frame_reference_.get("alpha", 1.0),
+						"transforms": frame_reference_.get("transforms", [])
 					})
 			else:
-				if (frame_layer_.get("groups") != null and 
-					not frame_layer_["groups"].has(group_name_)
+				if (frame_layer_.get("groups", null) != null and
+					not _matches_values(
+						group_name_,
+						frame_layer_.get("groups", [])
+					)
 				):
 					continue
 					
-				if (frame_layer_.get("variants") != null and 
-					not frame_layer_["variants"].has(variant_name_)
+				if (frame_layer_.get("variants", null) != null and
+					not _matches_values(
+						variant_name_,
+						frame_layer_.get("variants", [])
+					)
 				):
 					continue
 					
 				new_frame_layers_.append({
 					"layer": frame_layer_.get("layer", "*"),
 					"offset": frame_layer_.get("offset", [0, 0]),
-					"alpha": frame_layer_.get("alpha", 1.0)
+					"alpha": frame_layer_.get("alpha", 1.0),
+					"transforms": frame_layer_.get("transforms", [])
 				})
 				
 		new_frames_.append(new_frame_layers_)
 		
 	return new_frames_
+
+func _matches_values(s: String, values: Array) -> bool:
+	if values.has(s):
+		return true
+	
+	for value: String in values:
+		if value.begins_with("/") and value.ends_with("/"):
+			var pattern: String = value.substr(1, value.length() - 2)
+			var regex: RegEx = RegEx.new()
+			if regex.compile(pattern) == OK:
+				var match_: RegExMatch = regex.search(s)
+				if match_ != null:
+					return true
+		
+		var parts: PackedStringArray = value.split("*", true, 1)
+		if parts.size() == 2 and s.begins_with(parts[0]) and s.ends_with(parts[1]):
+			return true
+	
+	return false
 
 func _clean_path(s_: String) -> String:
 	var replace_: Dictionary = {
@@ -1547,7 +1625,8 @@ func _clean_path(s_: String) -> String:
 		"[[group]]": _clean_value(_group_name),
 		"[[template]]": _clean_value(_config_data["template"]),
 		"[[mode]]": _config_data.get("mode", "images"),
-		"[[direction]]": _config_data.get("direction", "horizontal"),
+		"[[sheet_direction]]": _config_data.get("sheet_direction", "horizontal"),
+		"[[frame_direction]]": _config_data.get("frame_direction", "horizontal"),
 		"[[frame]]": str(_frame_index),
 		"[[frame_width]]": str(_frame_width),
 		"[[frame_height]]": str(_frame_height),
@@ -1564,7 +1643,8 @@ func _clean_path(s_: String) -> String:
 		"[[^group]]": _clean_value(_group_name, true),
 		"[[^template]]": _clean_value(_config_data["template"], true),
 		"[[^mode]]": _config_data.get("mode", "images").replace("_", " ").capitalize(),
-		"[[^direction]]": _config_data.get("direction", "horizontal").capitalize(),
+		"[[^sheet_direction]]": _config_data.get("sheet_direction", "horizontal").capitalize(),
+		"[[^frame_direction]]": _config_data.get("frame_direction", "horizontal").capitalize(),
 		"[[^frame]]": str(_frame_index),
 		"[[^frame_width]]": str(_frame_width),
 		"[[^frame_height]]": str(_frame_height),

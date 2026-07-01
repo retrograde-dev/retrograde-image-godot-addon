@@ -15,6 +15,7 @@ var _folder_dialog: EditorFileDialog
 var _configs: Array[RetrogradeImageConfig] = []
 var _selected_index: int = -1
 var _save: RetrogradeImageSave = RetrogradeImageSave.new()
+var _is_editor_saving: bool = false
 
 func _notification(what: int) -> void:
 	# Prevent theme from being saved to scene
@@ -22,11 +23,13 @@ func _notification(what: int) -> void:
 		NOTIFICATION_READY, NOTIFICATION_THEME_CHANGED:
 			_add_theme()
 		NOTIFICATION_EDITOR_PRE_SAVE:
+			_is_editor_saving = true
 			_remove_theme()
 			_remove_configs()
 		NOTIFICATION_EDITOR_POST_SAVE:
 			_add_theme()
 			_add_configs()
+			_is_editor_saving = false
 
 func _add_theme() -> void:
 	var theme_: Theme = EditorInterface.get_editor_theme()
@@ -78,6 +81,8 @@ func _ready() -> void:
 	_save.load()
 	
 	_add_configs()
+	
+	%HSplitContainer.split_offsets = _save.get_h_split_offsets()
 
 func _add_configs() -> void:
 	for path_: String in _save.get_config_paths():
@@ -237,7 +242,7 @@ func _remove_configuration(index_: int) -> void:
 		index_ -= 1
 	elif _configs.size() == 0:
 		index_ = -1
-	
+
 	_update_configs_list()
 	_select_configuration(index_)
 	_save.save()
@@ -307,7 +312,7 @@ func _get_selected_outputs() -> Array[String]:
 	return outputs_
 	
 func save_selected_config() -> void:
-	if _selected_index < 0:
+	if _selected_index < 0 || _is_editor_saving:
 		return
 		
 	var path_: String = _configs[_selected_index].path
@@ -320,7 +325,7 @@ func save_selected_config() -> void:
 		"ignore_output_config_path": %CheckBoxIgnoreOutputConfigPath.button_pressed,
 		"output_path": %LineEditOutputPath.text
 	}
-
+	
 	_save.set_config_data(path_, data_)
 	_save.save()
 
@@ -351,3 +356,7 @@ func _on_check_box_toggled(_toogled_on: bool ) -> void:
 		%ButtonGenerate.disabled = true
 	else:
 		%ButtonGenerate.disabled = false
+
+func _on_h_split_container_dragged(offset: int) -> void:
+	_save.set_h_split_offsets(%HSplitContainer.split_offsets)
+	_save.save()

@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://cgfc6k3w8qxnc"]
+[gd_scene format=3 uid="uid://cgfc6k3w8qxnc"]
 
 [ext_resource type="Script" uid="uid://c4c0w6yin2q6g" path="res://addons/retrograde_image/plugin/tabs/retrograde_image_tab.gd" id="1_t7g2o"]
 
-[node name="RetrogradeImageTab" type="Control"]
+[node name="RetrogradeImageTab" type="Control" unique_id=634269076]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +11,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_t7g2o")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="."]
+[node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=511532405]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,77 +19,76 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HSplitContainer" type="HSplitContainer" parent="ScrollContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContainer" unique_id=1473150485]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer/HSplitContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer/HBoxContainer" unique_id=1591161667]
 layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="HSplitContainer" type="HSplitContainer" parent="ScrollContainer/HSplitContainer/VBoxContainer"]
+[node name="HSplitContainer" type="HSplitContainer" parent="ScrollContainer/HBoxContainer/VBoxContainer" unique_id=1350372384]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+split_offsets = PackedInt32Array(-241, -442)
+split_offset = -241
 
-[node name="VBoxContainerConfigurations" type="VBoxContainer" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer"]
+[node name="VBoxContainerConfigurations" type="VBoxContainer" parent="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer" unique_id=1249170128]
 custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="LabelConfigurations" type="Label" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/VBoxContainerConfigurations"]
+[node name="LabelConfigurations" type="Label" parent="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer/VBoxContainerConfigurations" unique_id=1066920664]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Configurations:"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/VBoxContainerConfigurations"]
+[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer/VBoxContainerConfigurations" unique_id=1837464430]
 layout_mode = 2
 
-[node name="ButtonAddConfig" type="Button" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/VBoxContainerConfigurations/HBoxContainer"]
+[node name="ButtonAddConfig" type="Button" parent="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer/VBoxContainerConfigurations/HBoxContainer" unique_id=1477798376]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Add"
 
-[node name="ButtonRemoveConfig" type="Button" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/VBoxContainerConfigurations/HBoxContainer"]
+[node name="ButtonRemoveConfig" type="Button" parent="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer/VBoxContainerConfigurations/HBoxContainer" unique_id=872836654]
 unique_name_in_owner = true
 layout_mode = 2
 disabled = true
 text = "Delete"
 
-[node name="ItemListConfigs" type="ItemList" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/VBoxContainerConfigurations"]
+[node name="ItemListConfigs" type="ItemList" parent="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer/VBoxContainerConfigurations" unique_id=429032961]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HSplitContainer" type="HSplitContainer" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="VBoxContainerInputs" type="VBoxContainer" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/HSplitContainer"]
+[node name="VBoxContainerInputs" type="VBoxContainer" parent="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer" unique_id=636298574]
 custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="LabelInputs" type="Label" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/HSplitContainer/VBoxContainerInputs"]
+[node name="LabelInputs" type="Label" parent="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer/VBoxContainerInputs" unique_id=1679807739]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Inputs:"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/HSplitContainer/VBoxContainerInputs"]
+[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer/VBoxContainerInputs" unique_id=1720928947]
 layout_mode = 2
 
-[node name="ButtonSelectAllInputs" type="Button" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/HSplitContainer/VBoxContainerInputs/HBoxContainer"]
+[node name="ButtonSelectAllInputs" type="Button" parent="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer/VBoxContainerInputs/HBoxContainer" unique_id=1805657938]
 unique_name_in_owner = true
 layout_mode = 2
 disabled = true
 text = "Select All"
 
-[node name="Panel" type="Panel" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/HSplitContainer/VBoxContainerInputs"]
+[node name="Panel" type="Panel" parent="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer/VBoxContainerInputs" unique_id=986052959]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ScrollContainer" type="ScrollContainer" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/HSplitContainer/VBoxContainerInputs/Panel"]
+[node name="ScrollContainer" type="ScrollContainer" parent="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer/VBoxContainerInputs/Panel" unique_id=19038622]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -97,36 +96,36 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainerInputs" type="VBoxContainer" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/HSplitContainer/VBoxContainerInputs/Panel/ScrollContainer"]
+[node name="VBoxContainerInputs" type="VBoxContainer" parent="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer/VBoxContainerInputs/Panel/ScrollContainer" unique_id=1001905380]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="VBoxContainerOutputs" type="VBoxContainer" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/HSplitContainer"]
+[node name="VBoxContainerOutputs" type="VBoxContainer" parent="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer" unique_id=546378136]
 custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="LabelOutputs" type="Label" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/HSplitContainer/VBoxContainerOutputs"]
+[node name="LabelOutputs" type="Label" parent="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer/VBoxContainerOutputs" unique_id=792812216]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Outputs:"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/HSplitContainer/VBoxContainerOutputs"]
+[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer/VBoxContainerOutputs" unique_id=1311035386]
 layout_mode = 2
 
-[node name="ButtonSelectAllOutputs" type="Button" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/HSplitContainer/VBoxContainerOutputs/HBoxContainer"]
+[node name="ButtonSelectAllOutputs" type="Button" parent="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer/VBoxContainerOutputs/HBoxContainer" unique_id=1579650063]
 unique_name_in_owner = true
 layout_mode = 2
 disabled = true
 text = "Select All"
 
-[node name="Panel" type="Panel" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/HSplitContainer/VBoxContainerOutputs"]
+[node name="Panel" type="Panel" parent="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer/VBoxContainerOutputs" unique_id=55413568]
 custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ScrollContainer" type="ScrollContainer" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/HSplitContainer/VBoxContainerOutputs/Panel"]
+[node name="ScrollContainer" type="ScrollContainer" parent="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer/VBoxContainerOutputs/Panel" unique_id=653431777]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -134,59 +133,59 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainerOutputs" type="VBoxContainer" parent="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/HSplitContainer/VBoxContainerOutputs/Panel/ScrollContainer"]
+[node name="VBoxContainerOutputs" type="VBoxContainer" parent="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer/VBoxContainerOutputs/Panel/ScrollContainer" unique_id=1026602892]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContainer/HSplitContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContainer/HBoxContainer/VBoxContainer" unique_id=1135236016]
 layout_mode = 2
 
-[node name="LabelPath" type="Label" parent="ScrollContainer/HSplitContainer/VBoxContainer/HBoxContainer"]
+[node name="LabelPath" type="Label" parent="ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=1690807085]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Path:"
 
-[node name="LineEditOutputPath" type="LineEdit" parent="ScrollContainer/HSplitContainer/VBoxContainer/HBoxContainer"]
+[node name="LineEditOutputPath" type="LineEdit" parent="ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=279721982]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "res://assets"
 editable = false
 
-[node name="ButtonSelectOutputPath" type="Button" parent="ScrollContainer/HSplitContainer/VBoxContainer/HBoxContainer"]
+[node name="ButtonSelectOutputPath" type="Button" parent="ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=1607149279]
 unique_name_in_owner = true
 layout_mode = 2
 disabled = true
 
-[node name="VBoxContainerGenerate" type="VBoxContainer" parent="ScrollContainer/HSplitContainer"]
+[node name="VBoxContainerGenerate" type="VBoxContainer" parent="ScrollContainer/HBoxContainer" unique_id=916353063]
 custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 
-[node name="LabelGenerate" type="Label" parent="ScrollContainer/HSplitContainer/VBoxContainerGenerate"]
+[node name="LabelGenerate" type="Label" parent="ScrollContainer/HBoxContainer/VBoxContainerGenerate" unique_id=559616266]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Generate:"
 
-[node name="GridContainer" type="GridContainer" parent="ScrollContainer/HSplitContainer/VBoxContainerGenerate"]
+[node name="GridContainer" type="GridContainer" parent="ScrollContainer/HBoxContainer/VBoxContainerGenerate" unique_id=1129630521]
 layout_mode = 2
 columns = 2
 
-[node name="Label" type="Label" parent="ScrollContainer/HSplitContainer/VBoxContainerGenerate/GridContainer"]
+[node name="Label" type="Label" parent="ScrollContainer/HBoxContainer/VBoxContainerGenerate/GridContainer" unique_id=1348280648]
 layout_mode = 2
 text = "Theme"
 
-[node name="OptionButtonTheme" type="OptionButton" parent="ScrollContainer/HSplitContainer/VBoxContainerGenerate/GridContainer"]
+[node name="OptionButtonTheme" type="OptionButton" parent="ScrollContainer/HBoxContainer/VBoxContainerGenerate/GridContainer" unique_id=1907014828]
 unique_name_in_owner = true
 layout_mode = 2
 disabled = true
 
-[node name="Label3" type="Label" parent="ScrollContainer/HSplitContainer/VBoxContainerGenerate/GridContainer"]
+[node name="Label3" type="Label" parent="ScrollContainer/HBoxContainer/VBoxContainerGenerate/GridContainer" unique_id=1491069773]
 layout_mode = 2
 text = "Padding"
 
-[node name="SpinBoxPadding" type="SpinBox" parent="ScrollContainer/HSplitContainer/VBoxContainerGenerate/GridContainer"]
+[node name="SpinBoxPadding" type="SpinBox" parent="ScrollContainer/HBoxContainer/VBoxContainerGenerate/GridContainer" unique_id=1196855762]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -195,35 +194,36 @@ max_value = 128.0
 value = -1.0
 rounded = true
 editable = false
-suffix = "(Use Default)"
+suffix = "(Default)"
 
-[node name="CheckBoxIgnoreOutputPath" type="CheckBox" parent="ScrollContainer/HSplitContainer/VBoxContainerGenerate"]
+[node name="CheckBoxIgnoreOutputPath" type="CheckBox" parent="ScrollContainer/HBoxContainer/VBoxContainerGenerate" unique_id=606326927]
 unique_name_in_owner = true
 layout_mode = 2
 disabled = true
 text = "Ignore Output Path"
 
-[node name="CheckBoxIgnoreOutputConfigPath" type="CheckBox" parent="ScrollContainer/HSplitContainer/VBoxContainerGenerate"]
+[node name="CheckBoxIgnoreOutputConfigPath" type="CheckBox" parent="ScrollContainer/HBoxContainer/VBoxContainerGenerate" unique_id=813599478]
 unique_name_in_owner = true
 layout_mode = 2
 disabled = true
 text = "Ignore Output Config Path"
 
-[node name="ButtonGenerate" type="Button" parent="ScrollContainer/HSplitContainer/VBoxContainerGenerate"]
+[node name="ButtonGenerate" type="Button" parent="ScrollContainer/HBoxContainer/VBoxContainerGenerate" unique_id=66721388]
 unique_name_in_owner = true
 layout_mode = 2
 disabled = true
 text = "Generate Images"
 
-[connection signal="pressed" from="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/VBoxContainerConfigurations/HBoxContainer/ButtonAddConfig" to="." method="_on_button_add_config_pressed"]
-[connection signal="pressed" from="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/VBoxContainerConfigurations/HBoxContainer/ButtonRemoveConfig" to="." method="_on_button_remove_config_pressed"]
-[connection signal="item_selected" from="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/VBoxContainerConfigurations/ItemListConfigs" to="." method="_on_item_list_configs_item_selected"]
-[connection signal="pressed" from="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/HSplitContainer/VBoxContainerInputs/HBoxContainer/ButtonSelectAllInputs" to="." method="_on_button_select_all_inputs_pressed"]
-[connection signal="pressed" from="ScrollContainer/HSplitContainer/VBoxContainer/HSplitContainer/HSplitContainer/VBoxContainerOutputs/HBoxContainer/ButtonSelectAllOutputs" to="." method="_on_button_select_all_outputs_pressed"]
-[connection signal="text_changed" from="ScrollContainer/HSplitContainer/VBoxContainer/HBoxContainer/LineEditOutputPath" to="." method="_on_line_edit_output_path_text_changed"]
-[connection signal="pressed" from="ScrollContainer/HSplitContainer/VBoxContainer/HBoxContainer/ButtonSelectOutputPath" to="." method="_on_button_select_output_path_pressed"]
-[connection signal="item_selected" from="ScrollContainer/HSplitContainer/VBoxContainerGenerate/GridContainer/OptionButtonTheme" to="." method="_on_option_button_theme_item_selected"]
-[connection signal="value_changed" from="ScrollContainer/HSplitContainer/VBoxContainerGenerate/GridContainer/SpinBoxPadding" to="." method="_on_spin_box_padding_value_changed"]
-[connection signal="toggled" from="ScrollContainer/HSplitContainer/VBoxContainerGenerate/CheckBoxIgnoreOutputPath" to="." method="_on_check_box_ignore_output_path_toggled"]
-[connection signal="toggled" from="ScrollContainer/HSplitContainer/VBoxContainerGenerate/CheckBoxIgnoreOutputConfigPath" to="." method="_on_check_box_ignore_output_config_path_toggled"]
-[connection signal="pressed" from="ScrollContainer/HSplitContainer/VBoxContainerGenerate/ButtonGenerate" to="." method="_on_button_generate_pressed"]
+[connection signal="dragged" from="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer" to="." method="_on_h_split_container_dragged"]
+[connection signal="pressed" from="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer/VBoxContainerConfigurations/HBoxContainer/ButtonAddConfig" to="." method="_on_button_add_config_pressed"]
+[connection signal="pressed" from="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer/VBoxContainerConfigurations/HBoxContainer/ButtonRemoveConfig" to="." method="_on_button_remove_config_pressed"]
+[connection signal="item_selected" from="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer/VBoxContainerConfigurations/ItemListConfigs" to="." method="_on_item_list_configs_item_selected"]
+[connection signal="pressed" from="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer/VBoxContainerInputs/HBoxContainer/ButtonSelectAllInputs" to="." method="_on_button_select_all_inputs_pressed"]
+[connection signal="pressed" from="ScrollContainer/HBoxContainer/VBoxContainer/HSplitContainer/VBoxContainerOutputs/HBoxContainer/ButtonSelectAllOutputs" to="." method="_on_button_select_all_outputs_pressed"]
+[connection signal="text_changed" from="ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer/LineEditOutputPath" to="." method="_on_line_edit_output_path_text_changed"]
+[connection signal="pressed" from="ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer/ButtonSelectOutputPath" to="." method="_on_button_select_output_path_pressed"]
+[connection signal="item_selected" from="ScrollContainer/HBoxContainer/VBoxContainerGenerate/GridContainer/OptionButtonTheme" to="." method="_on_option_button_theme_item_selected"]
+[connection signal="value_changed" from="ScrollContainer/HBoxContainer/VBoxContainerGenerate/GridContainer/SpinBoxPadding" to="." method="_on_spin_box_padding_value_changed"]
+[connection signal="toggled" from="ScrollContainer/HBoxContainer/VBoxContainerGenerate/CheckBoxIgnoreOutputPath" to="." method="_on_check_box_ignore_output_path_toggled"]
+[connection signal="toggled" from="ScrollContainer/HBoxContainer/VBoxContainerGenerate/CheckBoxIgnoreOutputConfigPath" to="." method="_on_check_box_ignore_output_config_path_toggled"]
+[connection signal="pressed" from="ScrollContainer/HBoxContainer/VBoxContainerGenerate/ButtonGenerate" to="." method="_on_button_generate_pressed"]

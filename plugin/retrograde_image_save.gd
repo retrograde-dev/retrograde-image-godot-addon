@@ -1,44 +1,44 @@
 class_name RetrogradeImageSave
 
-const FILE_PATH: String = "user://retrograde_image.json"
-
-var data: Dictionary = {}
+var _configs: Dictionary = {}
+var _selected_config_path: String = ""
+var _h_split_offsets: PackedInt32Array = []
 
 func load() -> void:
-	if ProjectSettings.has_setting("addons/retrograde_image"):
-		data = ProjectSettings.get_setting("addons/retrograde_image")
-		ProjectSettings.clear("addons/retrograde_image")
-		save()
-	else:
-		data.set("configs", ProjectSettings.get_setting("addons/retrograde_image/configs", {}))
-		data.set("selected_config_path", ProjectSettings.get_setting("addons/retrograde_image/selected_config_path", ""))
+	_configs = ProjectSettings.get_setting("addons/retrograde_image/configs", {})
+	_selected_config_path = ProjectSettings.get_setting("addons/retrograde_image/selected_config_path", "")
+	_h_split_offsets = ProjectSettings.get_setting("addons/retrograde_image/h_split_offsets", [])
 
 func save() -> void:
-	ProjectSettings.set_setting("addons/retrograde_image/configs", data.get("configs", {}))
-	ProjectSettings.set_setting("addons/retrograde_image/selected_config_path", get_selected_config_path())
+	ProjectSettings.set_setting("addons/retrograde_image/configs", _configs)
+	ProjectSettings.set_setting("addons/retrograde_image/selected_config_path", _selected_config_path)
+	ProjectSettings.set_setting("addons/retrograde_image/h_split_offsets", _h_split_offsets)
+	
 	ProjectSettings.save()
 	
 func get_config_paths() -> Array:
-	return data.get("configs", {}).keys()
+	return _configs.keys()
 
 func get_selected_config_path() -> String:
-	return data.get("selected_config_path", "")
+	return _selected_config_path
 	
 func set_selected_config_path(path_: String) -> void:
-	data.set("selected_config_path", path_)
+	_selected_config_path = path_
 
 func get_config_data(path_: String) -> Dictionary:
-	return data.get("configs", {}).get(path_, {})
+	return _configs.get(path_, {})
 
 func set_config_data(path_: String, data_: Dictionary) -> void:
-	if not data.has("configs"):
-		data.set("configs", {})
-		
-	data.configs.set(path_, data_)
+	_configs.set(path_, data_)
 	
 func erase_config_data(path_: String) -> void:
-	if data.has("configs"):
-		data.configs.erase(path_)
+	_configs.erase(path_)
 		
 	if get_selected_config_path() == path_:
 		set_selected_config_path("")
+
+func get_h_split_offsets() -> PackedInt32Array:
+	return _h_split_offsets
+
+func set_h_split_offsets(offsets_: PackedInt32Array) -> void:
+	_h_split_offsets = offsets_
